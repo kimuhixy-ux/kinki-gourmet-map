@@ -8,11 +8,79 @@
 
   const PREFS = ["滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県"];
 
+  // OSMのcuisineタグ(英語/日本語表記が混在)を日本語カテゴリへ振り分ける。
+  // 上から順に判定し、最初に一致したカテゴリを採用する(寿司などの具体的な種別を
+  // 「和食」より先に判定することで、japanese;sushiのような複合タグでも寿司に分類する)。
+  const CATEGORIES = [
+    { id: "sushi", label: "寿司", tokens: ["sushi"] },
+    { id: "yakiniku", label: "焼肉・韓国", tokens: ["yakiniku", "korean", "barbecue", "焼肉"] },
+    { id: "ramen", label: "ラーメン・麺類", tokens: ["ramen", "noodle", "noodles", "焼きそば", "ラーメン"] },
+    { id: "chinese", label: "中華", tokens: ["chinese", "taiwanese", "gyoza", "餃子"] },
+    {
+      id: "curry_ethnic",
+      label: "カレー・エスニック",
+      tokens: [
+        "curry", "indian", "thai", "vietnamese", "nepalese", "nepali", "asian",
+        "mexican", "turkish", "kebab", "カレー", "curry rice",
+      ],
+    },
+    {
+      id: "izakaya",
+      label: "居酒屋・粉もの",
+      tokens: [
+        "yakitori", "okonomiyaki", "お好み焼き", "savory_pancakes", "takoyaki",
+        "たこ焼き", "friture", "fried_food", "串カツ", "焼き鳥", "居酒屋", "chicken",
+      ],
+      nameTokens: ["居酒屋"],
+    },
+    { id: "italian", label: "イタリアン", tokens: ["italian", "pizza", "pasta", "italian_pizza"] },
+    { id: "french", label: "フレンチ", tokens: ["french"] },
+    {
+      id: "western",
+      label: "洋食・欧米",
+      tokens: [
+        "western", "steak_house", "steak", "burger", "sandwich", "american",
+        "german", "spanish", "international", "buffet", "grill", "fine_dining",
+      ],
+    },
+    {
+      id: "cafe",
+      label: "カフェ・スイーツ",
+      tokens: ["coffee_shop", "cake", "ice_cream", "dessert", "tea", "pancake", "crepe", "breakfast"],
+    },
+    {
+      id: "japanese",
+      label: "和食",
+      tokens: [
+        "japanese", "soba", "udon", "tempura", "天ぷら", "tonkatsu", "pork_cutlet",
+        "とんかつ", "eel", "うどん", "そば", "蕎麦", "定食", "regional", "local",
+        "fish", "seafood", "海鮮",
+      ],
+    },
+    { id: "other", label: "その他", tokens: [] },
+  ];
+  const CATEGORY_IDS = CATEGORIES.map((c) => c.id);
+
+  function categorizeSpot(spot) {
+    const cuisineTokens = (spot.cuisine || "")
+      .split(";")
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean);
+    const name = spot.name || "";
+
+    for (const cat of CATEGORIES) {
+      if (cat.tokens.some((t) => cuisineTokens.includes(t.toLowerCase()))) return cat.id;
+      if (cat.nameTokens && cat.nameTokens.some((t) => name.includes(t))) return cat.id;
+    }
+    return "other";
+  }
+
   const state = {
     spots: [],
     spotsById: new Map(),
     markersById: new Map(),
     prefVisible: Object.fromEntries(PREFS.map((p) => [p, true])),
+    categoryVisible: Object.fromEntries(CATEGORY_IDS.map((id) => [id, true])),
   };
 
   const map = L.map("map", {
@@ -100,6 +168,7 @@
     clusterGroup.clearLayers();
     for (const spot of state.spots) {
       if (!state.prefVisible[spot.pref]) continue;
+      if (!state.categoryVisible[spot.category]) continue;
       const marker = state.markersById.get(spot.id);
       clusterGroup.addLayer(marker);
     }
@@ -113,6 +182,10 @@
     if (!state.prefVisible[spot.pref]) {
       state.prefVisible[spot.pref] = true;
       document.querySelector(`.toggle-btn[data-pref="${spot.pref}"]`).classList.add("active");
+    }
+    if (!state.categoryVisible[spot.category]) {
+      state.categoryVisible[spot.category] = true;
+      document.querySelector(`.chip-btn[data-category="${spot.category}"]`).classList.add("active");
     }
     rebuildClusters();
 
@@ -130,6 +203,7 @@
     state.spots = data;
 
     for (const spot of state.spots) {
+      spot.category = categorizeSpot(spot);
       state.spotsById.set(spot.id, spot);
       const marker = L.marker([spot.lat, spot.lng], { icon: makeIcon() });
       marker.bindPopup(() => buildPopupContent(spot));
@@ -140,7 +214,7 @@
   }
 
   // フィルタUI: 都道府県トグル
-  document.querySelectorAll(".toggle-btn").forEach((btn) => {
+  document.querySelectorAll("#pref-filter .toggle-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const pref = btn.dataset.pref;
       state.prefVisible[pref] = !state.prefVisible[pref];
@@ -149,17 +223,42 @@
     });
   });
 
+  // フィルタUI: ジャンル(カテゴリ)トグル
+  const categoryChips = document.getElementById("category-chips");
+  for (const cat of CATEGORIES) {
+    const btn = document.createElement("button");
+    btn.className = "chip-btn active";
+    btn.dataset.category = cat.id;
+    btn.textContent = cat.label;
+    btn.addEventListener("click", () => {
+      state.categoryVisible[cat.id] = !state.categoryVisible[cat.id];
+      btn.classList.toggle("active", state.categoryVisible[cat.id]);
+      rebuildClusters();
+    });
+    categoryChips.appendChild(btn);
+  }
+
   // 検索
   const searchToggleBtn = document.getElementById("search-toggle-btn");
   const searchPanel = document.getElementById("search-panel");
   const searchInput = document.getElementById("search-input");
   const searchResults = document.getElementById("search-results");
 
+  // ジャンル(カテゴリ)パネル
+  const categoryToggleBtn = document.getElementById("category-toggle-btn");
+  const categoryPanel = document.getElementById("category-panel");
+
   searchToggleBtn.addEventListener("click", () => {
+    categoryPanel.classList.add("hidden");
     searchPanel.classList.toggle("hidden");
     if (!searchPanel.classList.contains("hidden")) {
       searchInput.focus();
     }
+  });
+
+  categoryToggleBtn.addEventListener("click", () => {
+    searchPanel.classList.add("hidden");
+    categoryPanel.classList.toggle("hidden");
   });
 
   searchInput.addEventListener("input", () => {

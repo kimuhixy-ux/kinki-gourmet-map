@@ -92,6 +92,50 @@ html, body {
   background: #f0f0f0;
 }
 
+/* ジャンル(カテゴリ)パネル */
+#category-panel {
+  position: fixed;
+  top: env(safe-area-inset-top);
+  left: 8px;
+  right: 8px;
+  z-index: 600;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 10px;
+  margin-top: 8px;
+}
+
+#category-panel.hidden {
+  display: none;
+}
+
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.category-chips .chip-btn {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 20px;
+  background: #f0d9d6;
+  color: #b23a2f;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.category-chips .chip-btn.active {
+  background: #b23a2f;
+  color: #ffffff;
+}
+
 /* フィルタバー */
 #filter-bar {
   position: fixed;
@@ -114,9 +158,11 @@ html, body {
 }
 
 .toggle-btn,
-#search-toggle-btn {
+#search-toggle-btn,
+#category-toggle-btn {
   flex: 1;
   min-width: 0;
+  min-height: 44px;
   padding: 10px 4px;
   border: none;
   border-radius: 8px;
@@ -132,7 +178,8 @@ html, body {
   color: #b23a2f;
 }
 
-#search-toggle-btn {
+#search-toggle-btn,
+#category-toggle-btn {
   flex: 0 0 48px;
 }
 
