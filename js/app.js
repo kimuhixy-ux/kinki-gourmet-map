@@ -155,7 +155,7 @@
     }
 
     parts.push(`<div class="spot-links">`);
-    parts.push(`<a href="${appleMapsSearchUrl(spot)}" target="_blank" rel="noopener">マップで開く</a>`);
+    parts.push(`<a href="${appleMapsSearchUrl(spot)}" target="_blank" rel="noopener">評価を見る(Apple Maps)</a>`);
     parts.push(`<a href="${appleMapsDirectionsUrl(spot)}" target="_blank" rel="noopener">経路案内</a>`);
     const websiteUrl = safeWebsiteUrl(spot.website);
     if (websiteUrl) {
