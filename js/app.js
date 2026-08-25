@@ -94,6 +94,9 @@
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
 
+  // デフォルトの右下表示だと下部のフィルタバーに隠れてタップできないため右上に移動する
+  map.attributionControl.setPosition("topright");
+
   const clusterGroup = L.markerClusterGroup();
   clusterGroup.addTo(map);
 
