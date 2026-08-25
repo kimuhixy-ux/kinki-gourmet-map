@@ -1,0 +1,25 @@
+{
+  "name": "近畿グルメマップ",
+  "short_name": "近畿グルメ",
+  "description": "近畿地方の食事ができるお店を1枚の地図で探せるPWA",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#b23a2f",
+  "theme_color": "#b23a2f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
