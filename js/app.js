@@ -1,12 +1,16 @@
 (function () {
   "use strict";
 
-  const DEFAULT_CENTER = [34.75, 135.6];
-  const DEFAULT_ZOOM = 9;
+  const DEFAULT_CENTER = [34.3, 133.5];
+  const DEFAULT_ZOOM = 7;
   const GEOLOCATION_ZOOM = 13;
   const MARKER_COLOR = "#b23a2f";
 
-  const PREFS = ["滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県"];
+  const PREFS = [
+    "滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県",
+    "鳥取県", "島根県", "岡山県", "広島県", "山口県",
+    "徳島県", "香川県", "愛媛県", "高知県",
+  ];
 
   // OSMのcuisineタグ(英語/日本語表記が混在)を日本語カテゴリへ振り分ける。
   // 上から順に判定し、最初に一致したカテゴリを採用する(寿司などの具体的な種別を
@@ -184,7 +188,7 @@
 
     if (!state.prefVisible[spot.pref]) {
       state.prefVisible[spot.pref] = true;
-      document.querySelector(`.toggle-btn[data-pref="${spot.pref}"]`).classList.add("active");
+      document.querySelector(`.chip-btn[data-pref="${spot.pref}"]`).classList.add("active");
     }
     if (!state.categoryVisible[spot.category]) {
       state.categoryVisible[spot.category] = true;
@@ -217,14 +221,19 @@
   }
 
   // フィルタUI: 都道府県トグル
-  document.querySelectorAll("#pref-filter .toggle-btn").forEach((btn) => {
+  const prefChips = document.getElementById("pref-chips");
+  for (const pref of PREFS) {
+    const btn = document.createElement("button");
+    btn.className = "chip-btn active";
+    btn.dataset.pref = pref;
+    btn.textContent = pref;
     btn.addEventListener("click", () => {
-      const pref = btn.dataset.pref;
       state.prefVisible[pref] = !state.prefVisible[pref];
       btn.classList.toggle("active", state.prefVisible[pref]);
       rebuildClusters();
     });
-  });
+    prefChips.appendChild(btn);
+  }
 
   // フィルタUI: ジャンル(カテゴリ)トグル
   const categoryChips = document.getElementById("category-chips");
@@ -251,17 +260,35 @@
   const categoryToggleBtn = document.getElementById("category-toggle-btn");
   const categoryPanel = document.getElementById("category-panel");
 
-  searchToggleBtn.addEventListener("click", () => {
+  // 都道府県パネル
+  const prefToggleBtn = document.getElementById("pref-toggle-btn");
+  const prefPanel = document.getElementById("pref-panel");
+
+  function closeAllPanels() {
+    searchPanel.classList.add("hidden");
     categoryPanel.classList.add("hidden");
-    searchPanel.classList.toggle("hidden");
-    if (!searchPanel.classList.contains("hidden")) {
+    prefPanel.classList.add("hidden");
+  }
+
+  searchToggleBtn.addEventListener("click", () => {
+    const wasHidden = searchPanel.classList.contains("hidden");
+    closeAllPanels();
+    if (wasHidden) {
+      searchPanel.classList.remove("hidden");
       searchInput.focus();
     }
   });
 
   categoryToggleBtn.addEventListener("click", () => {
-    searchPanel.classList.add("hidden");
-    categoryPanel.classList.toggle("hidden");
+    const wasHidden = categoryPanel.classList.contains("hidden");
+    closeAllPanels();
+    if (wasHidden) categoryPanel.classList.remove("hidden");
+  });
+
+  prefToggleBtn.addEventListener("click", () => {
+    const wasHidden = prefPanel.classList.contains("hidden");
+    closeAllPanels();
+    if (wasHidden) prefPanel.classList.remove("hidden");
   });
 
   searchInput.addEventListener("input", () => {

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>近畿グルメマップ</title>
-<meta name="description" content="近畿地方(滋賀・京都・大阪・兵庫・奈良・和歌山)の食事ができるお店を1枚の地図で探せるPWA">
+<meta name="description" content="近畿・中国・四国地方(15府県)の食事ができるお店を1枚の地図で探せるPWA">
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
@@ -38,15 +38,14 @@
   <div class="category-chips" id="category-chips"></div>
 </div>
 
+<div id="pref-panel" class="hidden">
+  <div class="category-chips" id="pref-chips"></div>
+</div>
+
 <div id="filter-bar">
   <div class="filter-row" id="pref-filter">
-    <button class="toggle-btn active" data-pref="滋賀県">滋賀</button>
-    <button class="toggle-btn active" data-pref="京都府">京都</button>
-    <button class="toggle-btn active" data-pref="大阪府">大阪</button>
-    <button class="toggle-btn active" data-pref="兵庫県">兵庫</button>
-    <button class="toggle-btn active" data-pref="奈良県">奈良</button>
-    <button class="toggle-btn active" data-pref="和歌山県">和歌山</button>
-    <button id="category-toggle-btn" aria-label="ジャンル">🍽</button>
+    <button id="pref-toggle-btn" aria-label="都道府県">🗾 都道府県</button>
+    <button id="category-toggle-btn" aria-label="ジャンル">🍽 ジャンル</button>
     <button id="search-toggle-btn" aria-label="検索">🔍</button>
   </div>
 </div>

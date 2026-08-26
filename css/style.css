@@ -92,8 +92,9 @@ html, body {
   background: #f0f0f0;
 }
 
-/* ジャンル(カテゴリ)パネル */
-#category-panel {
+/* ジャンル(カテゴリ)・都道府県パネル */
+#category-panel,
+#pref-panel {
   position: fixed;
   top: env(safe-area-inset-top);
   left: 8px;
@@ -108,7 +109,8 @@ html, body {
   margin-top: 8px;
 }
 
-#category-panel.hidden {
+#category-panel.hidden,
+#pref-panel.hidden {
   display: none;
 }
 
@@ -157,8 +159,8 @@ html, body {
   flex-wrap: wrap;
 }
 
-.toggle-btn,
 #search-toggle-btn,
+#pref-toggle-btn,
 #category-toggle-btn {
   flex: 1;
   min-width: 0;
@@ -173,13 +175,7 @@ html, body {
   white-space: nowrap;
 }
 
-.toggle-btn.active {
-  background: #ffffff;
-  color: #b23a2f;
-}
-
-#search-toggle-btn,
-#category-toggle-btn {
+#search-toggle-btn {
   flex: 0 0 48px;
 }
 

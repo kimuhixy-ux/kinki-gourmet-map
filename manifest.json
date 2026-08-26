@@ -1,7 +1,7 @@
 {
   "name": "近畿グルメマップ",
   "short_name": "近畿グルメ",
-  "description": "近畿地方の食事ができるお店を1枚の地図で探せるPWA",
+  "description": "近畿・中国・四国地方の食事ができるお店を1枚の地図で探せるPWA",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

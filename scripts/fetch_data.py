@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Overpass APIから近畿地方(滋賀・京都・大阪・兵庫・奈良・和歌山)の
+"""Overpass APIから近畿・中国・四国地方(15府県)の
 食事ができる店(amenity=restaurant)のデータを取得し、data/restaurants.jsonを生成する。"""
 
 import json
@@ -29,6 +29,15 @@ PREFECTURES = [
     ("兵庫県", "JP-28"),
     ("奈良県", "JP-29"),
     ("和歌山県", "JP-30"),
+    ("鳥取県", "JP-31"),
+    ("島根県", "JP-32"),
+    ("岡山県", "JP-33"),
+    ("広島県", "JP-34"),
+    ("山口県", "JP-35"),
+    ("徳島県", "JP-36"),
+    ("香川県", "JP-37"),
+    ("愛媛県", "JP-38"),
+    ("高知県", "JP-39"),
 ]
 
 QUERY_TEMPLATE = """
